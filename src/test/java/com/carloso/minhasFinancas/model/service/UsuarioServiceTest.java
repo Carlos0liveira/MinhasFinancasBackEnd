@@ -37,7 +37,6 @@ public class UsuarioServiceTest {
 		Usuario usuario = Usuario.builder().nome("Carlos").email("carlos@gmail.com").build();
 		repository.save(usuario);
 		
-		
 		Assertions.assertThrows(RegraNegocioExeption.class, () -> service.validarEmail("carlos@gmail.com"));
 		
 		
