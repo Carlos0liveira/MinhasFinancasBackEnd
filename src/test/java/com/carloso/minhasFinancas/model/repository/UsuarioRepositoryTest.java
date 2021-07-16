@@ -78,6 +78,7 @@ public class UsuarioRepositoryTest {
 		  
 	}
 	
+	@Test
 	public void deveRetornarVazioAoBuscarUsuarioPorEmailQuandoNaoExiste() {
 
 		
