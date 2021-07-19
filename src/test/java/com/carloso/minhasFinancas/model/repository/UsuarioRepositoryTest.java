@@ -30,8 +30,10 @@ public class UsuarioRepositoryTest {
 	TestEntityManager entityManager;
 	
 	public static Usuario criarUsuario() {
-		return  Usuario.builder().
-				 nome("Carlos").email("testeemail@gmail.com").senha("123")
+		return  Usuario.builder()
+				 .nome("Carlos")
+				 .email("testeemail@gmail.com")
+				 .senha("123")
 				 .build();
 	}
 	

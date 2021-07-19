@@ -13,17 +13,16 @@ import com.carloso.minhasFinancas.exception.RegraNegocioExeption;
 import com.carloso.minhasFinancas.model.entity.Usuario;
 import com.carloso.minhasFinancas.service.UsuarioService;
 
+import lombok.RequiredArgsConstructor;
+
 @RestController
-@RequestMapping("/api/usuario")
+@RequestMapping("/api/usuarios")
+@RequiredArgsConstructor
 public class UsuarioController {
 	
-	private UsuarioService service;
+	private final UsuarioService service;
 	
-	public UsuarioController(UsuarioService service) {
-		this.service = service;
-	}
-	
-	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@PostMapping("/salvarusuario")
 	public ResponseEntity salvar( @RequestBody UsuarioDTO dto){
 		
@@ -42,6 +41,7 @@ public class UsuarioController {
 	}	
 	
 	
+	@SuppressWarnings("rawtypes")
 	@PostMapping("/autenticar")
 	public ResponseEntity autenticar(@RequestBody UsuarioDTO dto) {
 		try {

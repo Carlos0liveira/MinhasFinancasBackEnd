@@ -17,15 +17,20 @@ import javax.persistence.Table;
 
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 
+import com.carloso.minhasFinancas.model.unum.StatusLancamento;
 import com.carloso.minhasFinancas.model.unum.TipoLancamento;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name="lancamento", schema="financas")
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Lancamento {
 	
 	@Id
@@ -59,7 +64,7 @@ public class Lancamento {
 	
 	@Column(name = "status")
 	@Enumerated(value = EnumType.STRING)
-	private TipoLancamento status;
+	private StatusLancamento status;
 	
 		
 }
