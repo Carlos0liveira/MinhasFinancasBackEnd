@@ -1,4 +1,3 @@
-﻿
 -- DROP DATABASE minhasfinancas;
 
 CREATE DATABASE minhasfinancas;
@@ -24,5 +23,7 @@ CREATE TABLE financas.lancamento
   tipo character varying(20),
   status character varying(20),
   id_usuario bigint REFERENCES financas.usuario (id),
-  data_cadastro date default now()
+  data_lancamento date default CURRENT_DATE
 );
+
+drop table financas.lancamento 

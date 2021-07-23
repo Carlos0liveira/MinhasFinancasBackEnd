@@ -1,5 +1,6 @@
 package com.carloso.minhasFinancas.api.resource;
 
+
 import java.util.List;
 import java.util.Optional;
 
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.carloso.minhasFinancas.api.dto.AtualizaStatusDTO;
 import com.carloso.minhasFinancas.api.dto.LancamentoDTO;
 import com.carloso.minhasFinancas.exception.RegraNegocioExeption;
 import com.carloso.minhasFinancas.model.entity.Lancamento;
@@ -24,16 +26,17 @@ import com.carloso.minhasFinancas.model.unum.TipoLancamento;
 import com.carloso.minhasFinancas.service.LancamentoService;
 import com.carloso.minhasFinancas.service.UsuarioService;
 
+import lombok.RequiredArgsConstructor;
+
 @RestController
 @RequestMapping("/api/lancamentos")
+@RequiredArgsConstructor
 public class LancamentoController {
 
-	private LancamentoService service;
-	private UsuarioService usuarioService;
+	private final LancamentoService service;
+	private final UsuarioService usuarioService;
 	
-	public LancamentoController(LancamentoService service) {
-		this.service = service;
-	}
+
 	
 	private Lancamento converter(LancamentoDTO dto) {
 		Lancamento lancamento = new Lancamento();
@@ -43,12 +46,19 @@ public class LancamentoController {
 		lancamento.setMes(dto.getMes());
 		lancamento.setValor(dto.getValor());
 		
-		Usuario usuario = usuarioService.buscarPorID(dto.getUsuario()).orElseThrow(() -> new RegraNegocioExeption("Usuario N'ao encontrado para o id Informado"));
+		Usuario usuario = usuarioService.buscarPorID(dto.getUsuario()).orElseThrow(() -> new RegraNegocioExeption("Usuario Não encontrado para o id Informado"));
 		
 		lancamento.setUsuario(usuario);
-		lancamento.setTipo(TipoLancamento.valueOf(dto.getTipo()));
-		lancamento.setStatus(StatusLancamento.valueOf(dto.getStatus()));
 		
+		if (dto.getTipo() != null) {
+			lancamento.setTipo(TipoLancamento.valueOf(dto.getTipo()));
+		}
+		
+		
+		
+		if(dto.getStatus() != null) {
+			lancamento.setStatus(StatusLancamento.valueOf(dto.getStatus()));
+		}
 		
 		
 		return lancamento;
@@ -76,6 +86,7 @@ public class LancamentoController {
 			try {
 				Lancamento lancamento = converter(dto);
 				lancamento.setId(entity.getId());
+				service.atualizar(lancamento);
 				return ResponseEntity.ok(lancamento);
 			}catch( RegraNegocioExeption e  ) {
 				return ResponseEntity.badRequest().body(e.getMessage());
@@ -95,21 +106,42 @@ public class LancamentoController {
 		new ResponseEntity("Lancamento nao encontrado na base de dados", HttpStatus.BAD_REQUEST));
 	}
 	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@PutMapping("{id}/atualiza-status")
+	public ResponseEntity atualizarStatus( @PathVariable("id") Long id, @RequestBody AtualizaStatusDTO dto ) {
+		return service.obterPorId(id).map(entity -> {
+			StatusLancamento statusInst = StatusLancamento.valueOf(dto.getStatus());
+			if (statusInst ==  null) {
+				return ResponseEntity.badRequest().body("Não foi possivel encontrar esse tipo de Status para o lancamento");
+			}
+			 try {
+				entity.setStatus(statusInst);
+				service.atualizar(entity);
+				return ResponseEntity.ok(entity); 
+			 }catch( RegraNegocioExeption e  ) {
+					return ResponseEntity.badRequest().body(e.getMessage());
+				}	
+		}).orElseGet( () ->
+		new ResponseEntity("Lancamento nao encontrado na base de dados", HttpStatus.BAD_REQUEST));
+	}
+	
 	@SuppressWarnings("rawtypes")
 	@GetMapping
 	public ResponseEntity buscarLancamento(
 			@RequestParam(value = "descricao", required = false) String descricao,
 			@RequestParam(value = "mes", required = false) Integer mes,
 			@RequestParam(value = "ano", required = false) Integer ano,
+			@RequestParam(value = "tipo", required = false) TipoLancamento tipo,
 			@RequestParam("usuario") Long  idUsuario
 			) {
 		Lancamento lancamentoFiltro = new Lancamento();
 		lancamentoFiltro.setDescricao(descricao);
 		lancamentoFiltro.setMes(mes);
 		lancamentoFiltro.setAno(ano);
+		lancamentoFiltro.setTipo(tipo);
 		
 		Optional<Usuario> usuario = usuarioService.buscarPorID(idUsuario);
-		if (usuario.isPresent()) {
+		if (!usuario.isPresent()) {
 			return ResponseEntity.badRequest().body("Nao foi possivel realizar a consulta");
 		}else {
 			lancamentoFiltro.setUsuario(usuario.get());
