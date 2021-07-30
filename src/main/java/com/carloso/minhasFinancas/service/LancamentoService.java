@@ -1,5 +1,6 @@
 package com.carloso.minhasFinancas.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,10 +17,11 @@ public interface LancamentoService {
 	
 	List<Lancamento> buscar(Lancamento lancamentoFiltro);
 	
-	
 	void atualizarStatus(Lancamento lancamento, StatusLancamento status);
 	
 	void validar(Lancamento lancamento);
 	
 	Optional <Lancamento> obterPorId(Long id);
+	
+	BigDecimal obterSaldo(Long id);
 }

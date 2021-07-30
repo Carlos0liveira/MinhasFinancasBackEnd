@@ -15,6 +15,7 @@ import com.carloso.minhasFinancas.exception.RegraNegocioExeption;
 import com.carloso.minhasFinancas.model.entity.Lancamento;
 import com.carloso.minhasFinancas.model.repository.LancamentoRepository;
 import com.carloso.minhasFinancas.model.unum.StatusLancamento;
+import com.carloso.minhasFinancas.model.unum.TipoLancamento;
 import com.carloso.minhasFinancas.service.LancamentoService;
 
 
@@ -100,6 +101,25 @@ public class LancamentoServiceImpl implements LancamentoService{
 	@Override
 	public Optional<Lancamento> obterPorId(Long id) {
 		return repository.findById(id);
+	}
+
+	
+	@Override
+	@Transactional(readOnly = true)
+	public BigDecimal obterSaldo(Long id) {
+		
+		BigDecimal receitas = repository.obterSaldo(id, TipoLancamento.RECEITA);
+		BigDecimal despesas = repository.obterSaldo(id, TipoLancamento.DESPESA);
+		
+		if (receitas == null){
+			receitas = BigDecimal.ZERO;
+		}
+		
+		if (despesas ==  null) {
+			despesas  = BigDecimal.ZERO;
+		}
+		
+		return receitas.subtract(despesas);
 	}
 
 	
