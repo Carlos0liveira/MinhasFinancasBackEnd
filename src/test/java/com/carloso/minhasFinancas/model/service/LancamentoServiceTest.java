@@ -1,5 +1,9 @@
 package com.carloso.minhasFinancas.model.service;
 
+import java.util.Arrays;
+import java.util.List;
+
+
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -54,6 +58,20 @@ public class LancamentoServiceTest {
 		Assertions.catchThrowableOfType(() -> {service.salvar(lancamentoSalvar);}, RegraNegocioExeption.class);
 		Mockito.verify(repository, Mockito.never()).save(lancamentoSalvar);
 		 
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Test
+	public void filtraLancamentos() {
+		Lancamento lancamento = LancamentoRepositoryTest.criarLancamento();
+		lancamento.setId(1l);
+		
+		List<Lancamento> lista = Arrays.asList(lancamento);
+		Mockito.when(repository.findAll(Mockito.any(org.springframework.data.domain.Example.class))).thenReturn(lista);
+	
+		List<Lancamento> resultado = service.buscar(lancamento);
+		
+		Assertions.assertThat(resultado).isNotEmpty().hasSize(1).contains(lancamento);
 	}
 	
 }
