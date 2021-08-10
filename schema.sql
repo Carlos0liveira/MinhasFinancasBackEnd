@@ -1,29 +1,18 @@
--- DROP DATABASE minhasfinancas;
+select * from usuario u
 
-CREATE DATABASE minhasfinancas;
 
-CREATE SCHEMA financas;
+select * from lancamento l 
 
-CREATE TABLE financas.usuario
-(
-  id bigserial NOT NULL PRIMARY KEY,
-  nome character varying(150),
-  email character varying(100),
-  senha character varying(20),
-  data_cadastro date default now()
-);
 
-CREATE TABLE financas.lancamento
-(
-  id bigserial NOT NULL PRIMARY KEY ,
-  descricao character varying(100) NOT NULL,
-  mes integer NOT NULL,
-  ano integer NOT NULL,
-  valor numeric(16,2),
-  tipo character varying(20),
-  status character varying(20),
-  id_usuario bigint REFERENCES financas.usuario (id),
-  data_lancamento date default CURRENT_DATE
-);
 
-drop table financas.lancamento 
+select * from usuario u 
+
+INSERT INTO financas.lancamento
+(id, descricao, mes, ano, valor, tipo, status, id_usuario, data_lancamento)
+VALUES(1, 'Aluguel', 7, 2021, 650.00, 'DESPESA', 'PENDENTE', 1, NULL);
+INSERT INTO financas.lancamento
+(id, descricao, mes, ano, valor, tipo, status, id_usuario, data_lancamento)
+VALUES(2, 'Condominio', 7, 2021, 500.00, 'DESPESA', 'PENDENTE', 1, NULL);
+INSERT INTO financas.lancamento
+(id, descricao, mes, ano, valor, tipo, status, id_usuario, data_lancamento)
+VALUES(3, 'Salário', 7, 2021, 1700.00, 'RECEITA', 'EFETIVADO', 1, NULL);

@@ -3,6 +3,8 @@ package com.carloso.minhasFinancas.api.resource;
 import java.math.BigDecimal;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,7 +33,7 @@ public class UsuarioController {
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@PostMapping("/salvarusuario")
-	public ResponseEntity salvar( @RequestBody UsuarioDTO dto){
+	public ResponseEntity salvar(@Valid @RequestBody UsuarioDTO dto){
 		
 		Usuario usuario  = Usuario.builder()
 				.nome(dto.getNome())
@@ -42,7 +44,6 @@ public class UsuarioController {
 			Usuario usuarioSalvo = service.salvarUsuario(usuario);
 			return new ResponseEntity(usuarioSalvo, HttpStatus.CREATED);
 		} catch (RegraNegocioExeption e) {
-			
 			return ResponseEntity.badRequest().body(e.getMessage());
 		}
 	}	
